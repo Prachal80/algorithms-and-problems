@@ -1,56 +1,51 @@
-/* package whatever; // don't place package name! */
-
 import java.util.*;
-import java.lang.*;
+import java.lang.Object;
 import java.io.*;
 
-/* Name of the class has to be "Main" only if the class is public. */
-class Ideone
-{
-	public static void main (String[] args) throws java.lang.Exception
-	{
-		HashMap<String, Object> dict = new HashMap<String, Object>();	
+
+public class FlattenDictionary {
+	static Map<String, String> result;
+	public static void main(String[] args){
+		
+		Map<String, Object> dict = new HashMap<String, Object>();	
 		dict.put("key1", "1");
-		HashMap<String, Object> c = new HashMap<String, Object>();
-		c.put("d", "3"); c.put("e", "1");
-		HashMap<String, Object> key2 = HashMap<String, Object>();
-		key2.put("a", "2"); key2.put("b", "3"); key2.put("c", c);
+		Map<String, Object> c = new HashMap<String, Object>();
+		c.put("d", "3"); 
+		c.put("e", "1");
+		Map<String, Object> key2 = new HashMap<String, Object>();
+		key2.put("a", "2"); 
+		key2.put("b", "3"); 
+		key2.put("c", c);
 		dict.put("key2", key2);
 		
-		/**
-		 * Input looks like this: 
-		 * {
-			 'Key1': '1',
-  			 'Key2': {
-    	  	 'a' : '2',
-    		 'b' : '3',
-    	     'c' : {
-      		 'd' : '3',
-      	     'e' : '1'
-    	     		}
-  			 	}
-    	  	 }
-    	  	 
-    	  	 Output should look like this:
-    	  	 {
-				  'Key1': '1',
-				  'Key2.a': '2',
-				  'Key2.b' : '3',
-				  'Key2.c.d' : '3',
-				  'Key2.c.e' : '1'
-			}
-    	  	 
-    	  **/
-	}
+		result =new HashMap<>();
+		flattenDict(dict, result, "");
+		System.out.println(result.toString());
+		}
 	
-	public void flattenDictionary(HashMap<String, Object>() dict, HashMap<String, String> h, String key, Object value) {
-		if (value instanceof String) {
-			h.put(key, (String) value);
-		} else if (value instanceof HashMap<String, Object>) {
-			for (String k : value.keySet()) {
-				Object v = dict.get(k);
-				flattenDictionary(h, key + "." + k, v);
+	private static void flattenDict(Map<String, Object> dict, Map<String, String> result, String parent_key){
+		
+		for(String key :dict.keySet()) {
+			
+			Object value = dict.get(key);
+			if(value instanceof String) {
+				if(parent_key != "") {
+					result.put(parent_key + "." + key, (String) value);
+				}
+				else {
+					result.put(key, (String) value);
+				}
 			}
+			else {
+				if(parent_key != "") {
+					key = parent_key + "." + key;
+					flattenDict((Map<String, Object>) value, result, key);
+				}
+				else {
+					flattenDict((Map<String, Object>) value, result, key);
+				}
+			}
+			
 		}
 	}
 }
